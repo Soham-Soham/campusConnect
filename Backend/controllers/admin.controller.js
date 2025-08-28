@@ -76,7 +76,7 @@ const uploadPreApprovedUsers = async (req, res) => {
         })
         .on("end", async () => {
           const result = await PreApprovedUser.insertMany(users, { ordered: false });
-          // console.log(result.results);
+          fs.unlinkSync(filePath);
           res.status(200).json({ message: "Users uploaded successfully", count: users.length });
         });
     } else if (filePath.endsWith(".xlsx")) {
@@ -92,6 +92,7 @@ const uploadPreApprovedUsers = async (req, res) => {
       });
 
       await PreApprovedUser.insertMany(users, { ordered: false });
+      fs.unlinkSync(filePath);
       res.status(200).json({ message: "Users uploaded successfully", count: users.length });
     } else {
       return res.status(400).json({ message: "Only CSV or Excel files are supported." });
