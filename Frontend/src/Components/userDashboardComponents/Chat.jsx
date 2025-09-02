@@ -40,13 +40,13 @@ const Chat = () => {
     if(search.trim() == "") return setSearchResult("");
     const {data} = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/v1/users/getAllUsers?search=${search}`,{withCredentials: true});
     setSearchResult(data);
-    console.log(data.length);
   };
 
   //Access chat
   const accessChat = async(userId)=>{
     const {data} = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/v1/chats`,{userId},{withCredentials: true});
     activeChat(data);
+    setSearch("");
     socket.emit("join chat",data._id);
 
     //load message
