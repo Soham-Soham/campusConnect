@@ -45,7 +45,7 @@ export default function CreatePost() {
       setLoading(true);
       
       const res = await axios.post(
-        "http://localhost:3000/api/v1/posts/createPost",
+        `${import.meta.env.VITE_BACKEND_URI}/api/v1/posts/createPost`,
         formData,
         {
           headers: {
