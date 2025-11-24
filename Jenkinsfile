@@ -1,56 +1,76 @@
 pipeline {
-    agent any
-
-    tools {
-        nodejs 'node18'   // THIS MAKES npm AVAILABLE
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: node
+    image: node:18-alpine
+    command:
+    - cat
+    tty: true
+  - name: dind
+    image: docker:dind
+    securityContext:
+      privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
+"""
+        }
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build Backend') {
+        stage('Backend Install') {
             steps {
-                dir('Backend') {
-                    sh 'npm install'
-                    sh 'npm run build || echo "Backend may not need build"'
+                container('node') {
+                    sh '''
+                    cd Backend
+                    npm install
+                    '''
                 }
             }
         }
 
-        stage('Build Frontend') {
+        stage('Frontend Install & Build') {
             steps {
-                dir('Frontend') {
-                    sh 'npm install'
-                    sh 'npm run build'
+                container('node') {
+                    sh '''
+                    cd Frontend
+                    npm install
+                    npm run build
+                    '''
                 }
             }
         }
 
-        stage('Docker Compose Build') {
+        stage('Docker Build') {
             steps {
-                sh 'docker-compose build'
+                container('dind') {
+                    script {
+                        // Check if docker-compose is available, otherwise install it or use docker build
+                        // For this setup, we'll try to use docker build directly if compose isn't there, 
+                        // but let's assume we want to build the images defined in docker-compose.yml
+                        
+                        // Note: Standard docker:dind might not have docker-compose installed.
+                        // We will build images manually to be safe.
+                        
+                        sh 'docker build -t backend:latest ./Backend'
+                        sh 'docker build -t frontend:latest ./Frontend'
+                        
+                        // If you have docker-compose, you can uncomment the line below:
+                        // sh 'docker-compose build'
+                    }
+                }
             }
-        }
-
-        stage('Docker Compose Deploy') {
-            steps {
-                sh 'docker-compose down || true'
-                sh 'docker-compose up -d'
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Deployment Successful!'
-        }
-        failure {
-            echo 'Pipeline Failed.'
         }
     }
 }
