@@ -158,20 +158,6 @@ spec:
                 }
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                container('kubectl') {
-                    dir('k8s-deployment') { 
-                        sh """
-                            # Deploying using 'latest' tag
-                            kubectl apply -f deployment.yaml -n 2401137
-                            
-                            # Force restart to ensure we pick up the newly pushed 'latest' image
-                            kubectl rollout restart deployment/campus-connect-backend -n 2401137
-                            kubectl rollout restart deployment/campus-connect-frontend -n 2401137
-                        """
-                    }
                 }
             }
         }
