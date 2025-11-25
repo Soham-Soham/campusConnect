@@ -9,6 +9,8 @@ RUN npm install
 
 COPY . .
 
+ARG VITE_BACKEND_URI
+ENV VITE_BACKEND_URI=$VITE_BACKEND_URI
 RUN npm run build
 
 # Production Stage
