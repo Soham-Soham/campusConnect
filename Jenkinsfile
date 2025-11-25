@@ -70,7 +70,14 @@ spec:
             steps {
                 container('dind') {
                     sh '''
-                        sleep 10
+                        # Wait for Docker daemon to be ready
+                        echo "⏳ Waiting for Docker daemon..."
+                        while ! docker info > /dev/null 2>&1; do
+                            echo "Waiting for Docker daemon..."
+                            sleep 2
+                        done
+                        echo "✅ Docker daemon is ready!"
+                        
                         echo "➡️ Building Images..."
                         
                         # --- THIS IS THE MAGIC LINE ---
