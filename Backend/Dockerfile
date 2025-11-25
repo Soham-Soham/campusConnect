@@ -4,10 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+# 🔴 CHANGE: Use 'npm ci' + '--only=production' to save RAM
+RUN npm ci --only=production
 
 COPY . .
 
 EXPOSE 3000
-
 CMD ["npm", "start"]
