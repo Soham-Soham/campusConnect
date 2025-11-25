@@ -92,7 +92,7 @@ spec:
                             sonar-scanner \
                               -Dsonar.projectKey=2401137_CampusConnect \
                               -Dsonar.sources=./Backend \
-                              -Dsonar.host.url=http://sonarqube.imcc.com \
+                              -Dsonar.host.url=http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000 \
                               -Dsonar.login=$SONAR_TOKEN
                         '''
                     }
