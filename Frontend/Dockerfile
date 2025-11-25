@@ -1,25 +1,34 @@
-FROM node:18-alpine
+# Stage 1: Builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-# 🔴 FIX 1: Network settings
+# Set network timeouts & registry
 RUN npm config set fetch-retry-maxtimeout 600000 \
     && npm config set fetch-retry-mintimeout 10000 \
     && npm config set registry https://registry.npmjs.org/
 
-# 🔴 FIX 2: Lightweight install with logs
-RUN npm install --omit=dev --no-audit --verbose
+# Install ALL dependencies (including devDependencies like vite)
+RUN npm ci --verbose
 
 COPY . .
 
 # Build the frontend
 RUN npm run build
 
-# Install serve
+# Stage 2: Runner
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Install serve globally in the runner stage
 RUN npm install -g serve
 
-CMD ["serve", "-s", "dist", "-l", "80"]
+# Copy only the build output from the builder stage
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 80
+
+CMD ["serve", "-s", "dist", "-l", "80"]
