@@ -1,5 +1,4 @@
-# 🔴 FIX: Use standard node image (Debian) instead of alpine.
-# Alpine causes 'bcrypt' to compile from source, which hangs your server.
+# Use Alpine for lightweight image (compatible with bcryptjs)
 FROM node:18-alpine
 
 WORKDIR /app

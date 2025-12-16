@@ -15,6 +15,11 @@ RUN npm ci --verbose
 
 COPY . .
 
+# Declare build arguments
+ARG VITE_BACKEND_URI
+# Make it available as an environment variable during build
+ENV VITE_BACKEND_URI=$VITE_BACKEND_URI
+
 # Build the frontend
 RUN npm run build
 
