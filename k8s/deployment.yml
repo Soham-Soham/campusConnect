@@ -21,7 +21,7 @@ spec:
       containers:
         - name: backend
           # 🔴 CRITICAL CHANGE: Matches the push path
-          image: nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085/2401137/server:latest
+          image: 127.0.0.1:30085/2401137/server:latest
           ports:
             - containerPort: 3000
           envFrom:
@@ -59,7 +59,7 @@ spec:
       containers:
         - name: frontend
           # 🔴 CRITICAL CHANGE: Matches the push path
-          image: nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085/2401137/client:latest
+          image: 127.0.0.1:30085/2401137/client:latest
           ports:
             - containerPort: 80
           resources:
